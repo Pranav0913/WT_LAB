@@ -1,32 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Full DOM Manipulation</title>
+    <style>
+      .box {
+        padding: 10px;
+        margin: 10px 0;
+        background-color: lightgray;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>DOM Elements Manipulation</h1>
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <title>Enhanced GUI</title>
-</head>
-
-<body>
-    <div class="container">
-        <h1>Welcome to the jQuery Experiment</h1>
-        <p class="hi" style="text-align: center;"><b>This experiment is using jQuery</b></p>
-        
-        <div class="button-group">
-            <button class="hide" onclick="hide()">Hide</button>
-            <button class="show">Show</button>
-            <button class="slideUp">Slide Up</button>
-            <button class="slideDown">Slide Down</button>
-            <button class="dbclick">Double Click</button>
-            <button class="mouseover">Mouse Over</button>
-            <button class="ajax">AJAX</button>
-        </div>
+    <div id="container" class="box">
+      <p id="text">Original Text</p>
     </div>
 
-    <script src="index.js"></script>
-</body>
+    <button id="changeTextBtn">Change Text</button>
+    <button id="changeStyleBtn">Change Style</button>
+    <button id="addElementBtn">Add Element</button>
+    <button id="removeElementBtn">Remove Element</button>
+    <button id="replaceElementBtn">Replace Element</button>
 
+    <script src="script.js"></script>
+  </body>
 </html>
+

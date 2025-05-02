@@ -1,14 +1,52 @@
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = htmlspecialchars($_POST["name"]);
-    $email = htmlspecialchars($_POST["email"]);
-    $age = htmlspecialchars($_POST["age"]);
-    $place = htmlspecialchars($_POST["place"]);
-    
-    if (!empty($name) && !empty($email) && !empty($age) && !empty($place)) {
-        echo "<p class='success'>Thank you, $name. Your email is $email, you are $age years old, and you are from $place.</p>";
+// Connection details
+$localhost = "127.0.0.1";
+$dbusername = "root";
+$dbpassword = "";
+$dbname = "file";
+
+// Connection
+$conn = mysqli_connect($localhost, $dbusername, $dbpassword, $dbname);
+
+// Initialize message variable
+$message = '';
+
+// Check if form is submitted
+if (isset($_POST["submit"])) {
+    // Retrieve file title
+    $title = $_POST["title"];
+
+    // File name with a random number so that similar files don't get replaced
+    $pname = rand(1000, 10000) . "-" . $_FILES["file"]["name"];
+
+    // Temporary file name to store file
+    $tname = $_FILES["file"]["tmp_name"];
+
+    // Upload directory path
+    $uploads_dir = 'images';
+
+    // Check if the directory exists, if not, create it
+    if (!is_dir($uploads_dir)) {
+        mkdir($uploads_dir, 0777, true);
+    }
+
+    // Move the uploaded file to a specific location
+    if (move_uploaded_file($tname, $uploads_dir . '/' . $pname)) {
+        // SQL query to insert into database
+        $sql = "INSERT INTO fileup1 (title, image) VALUES ('$title', '$pname')";
+
+        // Execute query
+        if (mysqli_query($conn, $sql)) {
+            // Set success message
+            $message = "File successfully uploaded";
+            
+        } else {
+            // Set error message
+            $message = "Error: " . mysqli_error($conn);
+        }
     } else {
-        echo "<p class='error'>Please fill in all fields.</p>";
+        // Set error message
+        $message = "Failed to move uploaded file. Check your upload directory permissions.";
     }
 }
 ?>
@@ -16,65 +54,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Simple PHP Form</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 50px;
-            background-color: #f4f4f4;
-        }
-        form {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-        }
-        label {
-            font-weight: bold;
-        }
-        input[type="text"], input[type="email"], input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        input[type="submit"] {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        input[type="submit"]:hover {
-            background: #218838;
-        }
-        .success {
-            color: green;
-        }
-        .error {
-            color: red;
-        }
-    </style>
+    <title>File Upload</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-    <form method="post" action="">
-        <label for="name">Name:</label>
-        <input type="text" name="name" id="name" required>
-        <br>
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" required>
-        <br>
-        <label for="age">Age:</label>
-        <input type="number" name="age" id="age" required>
-        <br>
-        <label for="place">Place:</label>
-        <input type="text" name="place" id="place" required>
-        <br>
-        <input type="submit" value="Submit">
+    <form method="post" enctype="multipart/form-data">
+        <label>Title</label>
+        <input type="text" name="title">
+        <label>File Upload</label>
+        <input type="file" name="file">
+        <input type="submit" name="submit">
     </form>
+
+    <!-- Display message -->
+    <?php if(!empty($message)): ?>
+        <p><?php echo $message; ?></p>
+    <?php endif; ?>
 </body>
-</html> 
+</html>
